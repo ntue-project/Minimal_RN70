@@ -1,120 +1,152 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React from "react";
+import {StatusBar, StyleSheet, Text, View} from "react-native";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
+import {HStack} from "./src/component/primitive/Layout";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import {createNativeStackNavigator, NativeStackNavigationProp} from "@react-navigation/native-stack";
+import SplashScreen from "./src/screen/SplashScreen";
+import LinearGradient from "react-native-linear-gradient";
+import LoginScreen from './src/screen/LoginScreen';
+import {NavigationContainer, useNavigation} from "@react-navigation/native";
+import {Provider} from "react-redux";
+import {store} from "./src/global_state/store";
+import InterestScreen from "./src/screen/InterestScreen";
+import IntroductionScreen from "./src/screen/IntroductionScreen";
+import MainScreen from "./src/screen/MainScreen";
+import ProductDetailScreen from "./src/screen/ProductDetailScreen";
+import WishlistScreen from "./src/screen/WishlistScreen";
+import NotificationScreen from "./src/screen/NotificationScreen";
+import AccountScreen from "./src/screen/AccountScreen";
+import {TabAccountIcon, TabHomeIcon, TabNotificationIcon, TabWishlistIcon} from "./src/component/TabIcon";
 
-import React, {type PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export type RootParamList = {
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+    Splash: undefined;
+    LoginScreen: undefined;
+    IntroductionScreen: undefined;
+    InterestScreen: undefined;
+    ProductDetailScreen : undefined
 
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+    TabContent: { screen: string }
+
+    首頁: undefined;
+    收藏: undefined
+    通知: undefined
+    帳號: undefined
 };
+
+const Stack = createNativeStackNavigator<RootParamList>();
+const Tab = createBottomTabNavigator<RootParamList>()
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+    return (
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+        <Provider store={store}>
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+            <StatusBar barStyle={"dark-content"}/>
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+            <SafeAreaProvider>
+                <NavigationContainer>
+                    <NativeStackContent/>
+                </NavigationContainer>
+            </SafeAreaProvider>
+        </Provider>
+    )
+}
 
-export default App;
+const NativeStackContent: React.FC = () => {
+    return (
+        <Stack.Navigator initialRouteName="TabContent"
+                         screenOptions={{
+                             headerShown: false
+                         }}
+        >
+            {/*STACK NAVIGATOR CONTENT (Intro)*/}
+            <Stack.Screen name="Splash" component={SplashScreen}/>
+            <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+            <Stack.Screen name="IntroductionScreen" component={IntroductionScreen}/>
+            <Stack.Screen name="InterestScreen" component={InterestScreen}/>
+
+            {/*STACK NAVIGATOR CONTENT (Entered)*/}
+            <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen}/>
+
+            {/*BOTTOM TAB CONTENT*/}
+            <Stack.Screen name="TabContent" component={TabContent}/>
+
+        </Stack.Navigator>
+    )
+}
+
+const TabContent: React.FC = () => {
+
+    const navigation = useNavigation<NativeStackNavigationProp<RootParamList>>()
+
+    return (
+        <Tab.Navigator initialRouteName="首頁"
+                       screenOptions={({route}) => ({
+                           headerShown: false,
+                           tabBarShowLabel: false,
+                           tabBarActiveTintColor: "#FF5454",
+                           tabBarIcon: ({focused, color, size}) => {
+                               if (route.name === "首頁") {
+                                   return (
+                                       <TabHomeIcon
+                                           props={{
+                                               focused: focused
+                                           }}
+                                           onPress={() => {
+                                               navigation.navigate("首頁")
+                                           }}
+                                       />
+                                   );
+                               }
+                               if (route.name === '收藏') {
+                                   return (
+                                       <TabWishlistIcon
+                                           props={{
+                                               focused: focused
+                                           }}
+                                           onPress={() => {
+                                               navigation.navigate("收藏")
+                                           }}
+                                       />
+                                   );
+                               }
+                               if (route.name === '通知') {
+                                   return (
+                                       <TabNotificationIcon
+                                           props={{
+                                               focused: focused
+                                           }}
+                                           onPress={() => {
+                                               navigation.navigate("通知")
+                                           }}
+                                       />
+                                   );
+                               }
+                               if (route.name === '帳號') {
+                                   return (
+                                       <TabAccountIcon
+                                           props={{
+                                               focused: focused
+                                           }}
+                                           onPress={() => {
+                                               navigation.navigate("帳號")
+                                           }}
+                                       />
+                                   );
+                               }
+                           },
+                       })}
+
+        >
+
+            <Tab.Screen name="首頁" component={MainScreen} />
+            <Tab.Screen name="收藏" component={WishlistScreen}/>
+            <Tab.Screen name="通知" component={NotificationScreen}/>
+            <Tab.Screen name="帳號" component={AccountScreen}/>
+        </Tab.Navigator>
+    )
+}
+
+export default App
