@@ -11,23 +11,22 @@ import {IconProps} from "react-native-vector-icons/Icon";
 import {Press} from "../component/primitive/Press";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {RootParamList} from "../../App";
+import {MainScreenProps} from "../type_definition/NavigationType";
 
 const InterestItem = (props: { uri: object, index: number }) => {
 
     const accountData = useSelector(selectAccount)
     const dispatch = useDispatch()
 
-    const [interests, setInterests] = useState<IAccountObject["personalization"]["interestedCategory"]>()
+    const [interests, setInterests] = useState<IAccountObject["interests"]["interestedCategory"]>()
 
     useEffect(() => {
-        setInterests(accountData.personalization.interestedCategory)
+        setInterests(accountData.interests.interestedCategory)
     }, [accountData])
 
     return (
 
         <Pressable
-
             style={{
                 margin: 4,
                 borderRadius: 15,
@@ -55,26 +54,27 @@ const InterestItem = (props: { uri: object, index: number }) => {
     )
 }
 
-type MainScreenProps = NativeStackNavigationProp<RootParamList, '首頁'>;
-
 const InterestScreen: React.FC = () => {
 
     const navigation = useNavigation<MainScreenProps>()
 
     const accountData = useSelector(selectAccount)
     const dispatch = useDispatch()
-    const [interests, setInterests] = useState<IAccountObject["personalization"]["interestedCategory"]>()
+    const [interests, setInterests] = useState<IAccountObject["interests"]["interestedCategory"]>()
 
     useEffect(() => {
-        setInterests(accountData.personalization.interestedCategory)
+        setInterests(accountData.interests.interestedCategory)
     }, [accountData])
 
     return (
         <>
             <BaseLayout center>
+
                 <VStack height={HEIGHT * .15} center>
+
                     <VarText type={"heading2"} content="選擇您感興趣的商品" color={"#666"}/>
                     <VarText type={"heading3"} content="選擇多個種類" color={"#999"}/>
+
                 </VStack>
 
                 <VStack>
@@ -145,7 +145,7 @@ const InterestScreen: React.FC = () => {
                         opacity={interests?.some(item => item) ? 1 : .5}
                         onPress={interests?.some(item => item) ?
                             () => {
-                                navigation.navigate('TabContent', {screen: '首頁'})
+                                navigation.navigate('TabContent', {screen: 'MainScreen'})
                             } :
                             () => {
                             }
@@ -161,7 +161,6 @@ const InterestScreen: React.FC = () => {
                     </Press>
 
                 </VStack>
-
             </BaseLayout>
         </>
     )

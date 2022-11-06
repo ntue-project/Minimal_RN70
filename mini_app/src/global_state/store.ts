@@ -15,6 +15,8 @@ export const store = configureStore({
     reducer: {
         account: persistReducer(persistConfig, accountReducer),
     },
+
+    //@ts-ignore
     devTools: process.env.NODE_ENV !== 'production',
     middleware: [thunk]
 

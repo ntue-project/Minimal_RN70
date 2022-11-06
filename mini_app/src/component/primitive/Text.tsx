@@ -39,10 +39,10 @@ export const VarText: React.FC<ITextProps> = ({type, content, bold, children, ..
             Object.assign(styleObj, Platform.OS === "ios" ? {fontSize: 18} : {fontSize: 18 + smaller})
             break
         case "heading1":
-            Object.assign(styleObj, Platform.OS === "ios" ? {fontSize: 21} : {fontSize: 21 + smaller})
+            Object.assign(styleObj, Platform.OS === "ios" ? {fontSize: 20} : {fontSize: 20 + smaller})
             break
         case "title":
-            Object.assign(styleObj, Platform.OS === "ios" ? {fontSize: 24} : {fontSize: 24 + smaller})
+            Object.assign(styleObj, Platform.OS === "ios" ? {fontSize: 22} : {fontSize: 22 + smaller})
             break
     }
 
@@ -53,7 +53,7 @@ export const VarText: React.FC<ITextProps> = ({type, content, bold, children, ..
             {
                 paddingHorizontal: props.px,
                 paddingVertical: props.py,
-                letterSpacing: props.letterSpacing? props.letterSpacing : 0.25,
+                letterSpacing: props.letterSpacing? props.letterSpacing : 0.5,
                 fontWeight: bold ? props.fontWeight ? props.fontWeight : "bold" : "normal",
                 ...props}
         ]}>

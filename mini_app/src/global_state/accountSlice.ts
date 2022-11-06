@@ -10,10 +10,10 @@ export interface IAccountObject {
         accountName: string
     }
 
-    personalization: {
+    interests: {
 
         interestedCategory: boolean[]
-        likedProduct: IProductDataList
+        likedProducts: IProductDataList
         wishlistedProduct: IProductDataList
     }
 
@@ -31,10 +31,10 @@ export const initialState = {
         accountName: ""
     },
 
-    personalization: {
+    interests: {
 
         interestedCategory: [false,false,false,false,false,false,false,false,false,false,false,false],
-        likedProduct: {
+        likedProducts: {
             items: [
                 {
                     product_id: 1,
@@ -66,22 +66,22 @@ const accountSlice = createSlice({
             state.info = action.payload
         },
 
-        setInterestedCategory(state, action: PayloadAction<IAccountObject['personalization']['interestedCategory']>) {
-            state.personalization.interestedCategory = action.payload
+        setInterestedCategory(state, action: PayloadAction<IAccountObject['interests']['interestedCategory']>) {
+            state.interests.interestedCategory = action.payload
         },
 
         setProductLikeStatus(state, action: PayloadAction<IProductItem>) {
 
-            // let dummy = [...state.personalization.likedProduct.items]
+            // let dummy = [...state.interests.likedProducts.items]
 
-            if(!state.personalization.likedProduct.items.some((product: IProductItem) => product.product_id === action.payload.product_id)) {
+            if(!state.interests.likedProducts.items.some((product: IProductItem) => product.product_id === action.payload.product_id)) {
 
                 // @ts-ignore
-                state.personalization.likedProduct.items.push(action.payload)
+                state.interests.likedProducts.items.push(action.payload)
 
             } else {
 
-                state.personalization.likedProduct.items = state.personalization.likedProduct.items.filter((product: IProductItem) => product.product_id !== action.payload.product_id)
+                state.interests.likedProducts.items = state.interests.likedProducts.items.filter((product: IProductItem) => product.product_id !== action.payload.product_id)
             }
 
         }

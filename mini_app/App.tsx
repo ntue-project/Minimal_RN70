@@ -18,22 +18,7 @@ import WishlistScreen from "./src/screen/WishlistScreen";
 import NotificationScreen from "./src/screen/NotificationScreen";
 import AccountScreen from "./src/screen/AccountScreen";
 import {TabAccountIcon, TabHomeIcon, TabNotificationIcon, TabWishlistIcon} from "./src/component/TabIcon";
-
-export type RootParamList = {
-
-    Splash: undefined;
-    LoginScreen: undefined;
-    IntroductionScreen: undefined;
-    InterestScreen: undefined;
-    ProductDetailScreen : undefined
-
-    TabContent: { screen: string }
-
-    首頁: undefined;
-    收藏: undefined
-    通知: undefined
-    帳號: undefined
-};
+import {RootParamList} from "./src/type_definition/NavigationType";
 
 const Stack = createNativeStackNavigator<RootParamList>();
 const Tab = createBottomTabNavigator<RootParamList>()
@@ -82,56 +67,56 @@ const TabContent: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootParamList>>()
 
     return (
-        <Tab.Navigator initialRouteName="首頁"
+        <Tab.Navigator initialRouteName="MainScreen"
                        screenOptions={({route}) => ({
                            headerShown: false,
                            tabBarShowLabel: false,
                            tabBarActiveTintColor: "#FF5454",
                            tabBarIcon: ({focused, color, size}) => {
-                               if (route.name === "首頁") {
+                               if (route.name === "MainScreen") {
                                    return (
                                        <TabHomeIcon
                                            props={{
                                                focused: focused
                                            }}
                                            onPress={() => {
-                                               navigation.navigate("首頁")
+                                               navigation.navigate("MainScreen")
                                            }}
                                        />
                                    );
                                }
-                               if (route.name === '收藏') {
+                               if (route.name === 'WishlistScreen') {
                                    return (
                                        <TabWishlistIcon
                                            props={{
                                                focused: focused
                                            }}
                                            onPress={() => {
-                                               navigation.navigate("收藏")
+                                               navigation.navigate("WishlistScreen")
                                            }}
                                        />
                                    );
                                }
-                               if (route.name === '通知') {
+                               if (route.name === 'NotificationScreen') {
                                    return (
                                        <TabNotificationIcon
                                            props={{
                                                focused: focused
                                            }}
                                            onPress={() => {
-                                               navigation.navigate("通知")
+                                               navigation.navigate("NotificationScreen")
                                            }}
                                        />
                                    );
                                }
-                               if (route.name === '帳號') {
+                               if (route.name === 'AccountScreen') {
                                    return (
                                        <TabAccountIcon
                                            props={{
                                                focused: focused
                                            }}
                                            onPress={() => {
-                                               navigation.navigate("帳號")
+                                               navigation.navigate("AccountScreen")
                                            }}
                                        />
                                    );
@@ -141,10 +126,10 @@ const TabContent: React.FC = () => {
 
         >
 
-            <Tab.Screen name="首頁" component={MainScreen} />
-            <Tab.Screen name="收藏" component={WishlistScreen}/>
-            <Tab.Screen name="通知" component={NotificationScreen}/>
-            <Tab.Screen name="帳號" component={AccountScreen}/>
+            <Tab.Screen name="MainScreen" component={MainScreen} />
+            <Tab.Screen name="WishlistScreen" component={WishlistScreen}/>
+            <Tab.Screen name="NotificationScreen" component={NotificationScreen}/>
+            <Tab.Screen name="AccountScreen" component={AccountScreen}/>
         </Tab.Navigator>
     )
 }

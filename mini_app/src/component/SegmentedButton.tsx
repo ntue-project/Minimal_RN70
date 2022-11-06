@@ -41,29 +41,25 @@ export const SegmentedButton : React.FC<ISegmentedButton> = ({leftLabel, rightLa
 
     return <>
 
-            <HStack height={48} width={"90%"} jCenter aCenter>
-                <animated.View style={{
-
-                }}>
-
-                </animated.View>
+            <HStack height={36} width={"90%"} jCenter aCenter>
 
 
-                    <Press backgroundColor={switchIndex === 1 ? "#ff6b3e" : "#ddd"} height={32} flex={1} marginRight={4}
-                           borderRadius={8}
+                    <Press height={32} flex={1} marginRight={4}
+                           borderBottomWidth={switchIndex === 1 ? 2 : 1} borderColor={switchIndex === 1 ? "#ff6b3e" : "#bbb"}
                            // borderWidth={switchIndex === 1 ? 1 : 0} borderColor={"#f54c19"}
                            onPress={onLeftPress}
                     >
                         {switchIndex === 1?
-                            <VarText type={"heading3"} content={leftLabel} color={"#fff"} bold/> : <VarText type={"heading3"} content={leftLabel} color={"#fff"}/>
+                            <VarText type={"heading3"} content={leftLabel} color={"#ff6b3e"} bold/> : <VarText type={"heading3"} content={leftLabel} color={"#bbb"}/>
                         }
                     </Press>
 
-                    <Press backgroundColor={switchIndex === 2 ? "#ff6b3e" : "#ddd"} height={32} flex={1} marginLeft={4} borderRadius={8}
+                    <Press height={32} flex={1} marginLeft={4}
+                           borderBottomWidth={switchIndex === 2 ? 2 : 1} borderColor={switchIndex === 2 ? "#ff6b3e" : "#bbb"}
                            onPress={onRightPress}
                     >
                         {switchIndex === 2?
-                            <VarText type={"heading3"} content={rightLabel} color={"#fff"} bold/> : <VarText type={"heading3"} content={rightLabel} color={"#fff"}/>
+                            <VarText type={"heading3"} content={rightLabel} color={"#ff6b3e"} bold/> : <VarText type={"heading3"} content={rightLabel} color={"#bbb"}/>
                         }
                     </Press>
 

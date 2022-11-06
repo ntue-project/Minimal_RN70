@@ -13,14 +13,16 @@ import * as tf from "@tensorflow/tfjs"
 import {selectAccount, setProductLikeStatus} from "../global_state/accountSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {print4} from "../utility/console";
-import {useIsFocused, useNavigation} from "@react-navigation/native";
+import {useIsFocused, useNavigation, useRoute} from "@react-navigation/native";
 import {config, useSpring, animated} from "@react-spring/native";
+import {ProductDetailScreenProps} from "../type_definition/NavigationType";
 
 export interface IProductItem {
 
     product_id: number,
     title: string,
     price: number
+    stars: number
 }
 
 export interface IProductDataList {
@@ -35,52 +37,60 @@ const testData: IProductDataList = {
             product_id: 1,
             title: "線圈線條筆記本",
             price: 49,
+            stars: 3.7
         },
         {
             product_id: 2,
             title: "笑臉長尾夾6入",
             price: 29,
+            stars: 3.1
         },
         {
             product_id: 3,
             title: "大迴紋針 12入",
             price: 59,
+            stars: 4.5
         },
         {
             product_id: 4,
             title: "F牌色鉛筆 12色",
             price: 149,
+            stars: 4.4
         },
         {
             product_id: 5,
             title: "枝葉搖曳馬克杯",
             price: 129,
+            stars: 5
         },
         {
             product_id: 6,
             title: "裝飾氣氛盆栽",
             price: 139,
+            stars: 3.7
         },
         {
             product_id: 7,
             title: "奇趣氛圍方塊",
             price: 49,
+            stars: 4.4
         },
     ]
 }
 
-const ProductItem: React.FC<IProductItem> = ({product_id, title, price}) => {
+export const ProductItem: React.FC<IProductItem> = (thisProduct) => {
 
     const account = useSelector(selectAccount)
+    const navigation = useNavigation<ProductDetailScreenProps>()
     const dispatch = useDispatch()
     const [isLiked, setIsLiked] = useState(false)
 
     useEffect(()=> {
 
-        // console.log("This Product is in LikedProduct " + )
-        // console.log("This is the likedProduct" + JSON.stringify(account.personalization.likedProduct.items.find((product: IProductItem) => product.product_id === 1), null, 2))
+        // console.log("This Product is in likedProducts " + )
+        // console.log("This is the likedProducts" + JSON.stringify(account.interests.likedProducts.items.find((product: IProductItem) => product.product_id === 1), null, 2))
 
-        setIsLiked(account.personalization.likedProduct.items.some((product: IProductItem) => product.product_id == product_id))
+        setIsLiked(account.interests.likedProducts.items.some((product: IProductItem) => product.product_id == thisProduct.product_id))
 
     }, [account])
 
@@ -96,6 +106,12 @@ const ProductItem: React.FC<IProductItem> = ({product_id, title, price}) => {
                 // justifyContent: "center",
                 // alignItems: "center",
             }}
+
+            onPress={()=> {
+
+                navigation.navigate("ProductDetailScreen", { thisProduct });
+
+            }}
         >
             <WishlistHeartIconButton
 
@@ -105,7 +121,12 @@ const ProductItem: React.FC<IProductItem> = ({product_id, title, price}) => {
 
                 onPress={()=> {
 
-                    dispatch(setProductLikeStatus({product_id: product_id, title: title, price: price}))
+                    dispatch(setProductLikeStatus({
+                        product_id: thisProduct.product_id,
+                        title: thisProduct.title,
+                        price: thisProduct.price,
+                        stars: thisProduct.stars
+                    }))
                 }}
             />
 
@@ -123,14 +144,14 @@ const ProductItem: React.FC<IProductItem> = ({product_id, title, price}) => {
                     marginLeft={2}
                     justify={"flex-start"}
             >
-                <VarText marginTop={2} type={"normal"} content={title} color={"#666666"}/>
-                <VarText marginTop={3} type={"heading3"} bold content={"$ " + price + ""} color={"#FF5454"}/>
+                <VarText marginTop={2} type={"normal"} content={thisProduct.title} color={"#666666"}/>
+                <VarText marginTop={3} type={"heading3"} bold content={"$ " + thisProduct.price + ""} color={"#FF5454"}/>
             </VStack>
         </Pressable>
     )
 }
 
-const CategoryItem = (props: { categoryText: string, selected: boolean }) => {
+export const CategoryItem = (props: { categoryText: string, selected: boolean }) => {
 
     return (
 
@@ -141,11 +162,11 @@ const CategoryItem = (props: { categoryText: string, selected: boolean }) => {
             locations={[0, 0.6]}
             colors={ props.selected ?
                 ['#ffa947', "#ff6a50"] :
-                ["#eee" , "#eee"]}
+                ["#f2f2f2" , "#f2f2f2"]}
 
             style={ props.selected?
                 { flex: 1 , marginRight: 12, borderRadius: 12} :
-                { flex: 1 , marginRight: 12, borderRadius: 12, borderWidth: 1, borderColor: "#ddd"}}
+                { flex: 1 , marginRight: 12, borderRadius: 12, borderWidth: 1, borderColor: "#ccc"}}
         >
             <Pressable
                 style={{
@@ -168,7 +189,7 @@ const CategoryItem = (props: { categoryText: string, selected: boolean }) => {
     )
 }
 
-const SearchResultItem: React.FC<IProductItem> = ({product_id, title, price}) => {
+export const SearchResultItem: React.FC<IProductItem> = ({product_id, title, price}) => {
 
     useEffect(()=> {
 
@@ -217,17 +238,13 @@ const SearchResultItem: React.FC<IProductItem> = ({product_id, title, price}) =>
     )
 }
 
-const ProductRenderItem: ListRenderItem<IProductItem> = ({item}) =>
+export const ProductRenderItem: ListRenderItem<IProductItem> = ({item}) =>
 
-    <ProductItem product_id={item.product_id}
-                 title={item.title}
-                 price={item.price}/>
+    <ProductItem {...item}/>
 
-const SearchResultRenderItem: ListRenderItem<IProductItem> = ({item}) =>
+export const SearchResultRenderItem: ListRenderItem<IProductItem> = ({item}) =>
 
-    <SearchResultItem product_id={item.product_id}
-                      title={item.title}
-                      price={item.price}/>
+    <SearchResultItem {...item}/>
 
 
 
@@ -239,7 +256,7 @@ const MainScreen: React.FC = () => {
     const [searchResult, setSearchResult] = useState<IProductDataList["items"]>([])
     const [enterAnimation, setEnterAnimation] = useState(false)
 
-    const likedProduct = useSelector(selectAccount).personalization.likedProduct
+    const likedProducts = useSelector(selectAccount).interests.likedProducts
     const dispatch = useDispatch()
     const account = useSelector(selectAccount)
 
@@ -250,17 +267,17 @@ const MainScreen: React.FC = () => {
     const SearchBarAnimation = useSpring({
 
         opacity: enterAnimation? 1 : 0,
-        bottom: enterAnimation? 0 : 64,
-        delay: 50,
-        config: config.default,
+        bottom: enterAnimation? 0 : 32,
+        delay: 0,
+        config: config.stiff,
     })
 
     const SearchButtonAnimation = useSpring({
 
         opacity: enterAnimation? 1 : 0,
-        bottom: enterAnimation? 0 : 64,
-        delay: 100,
-        config: config.default,
+        bottom: enterAnimation? 0 : 32,
+        delay: 25,
+        config: config.stiff,
     })
 
     const TopBannerAnimation = useSpring({
@@ -284,7 +301,7 @@ const MainScreen: React.FC = () => {
         opacity: enterAnimation? 1:0,
         left: enterAnimation? 0 : 96,
         delay: 0,
-        config: config.slow,
+        config: config.default,
     })
 
     useEffect(() => {
@@ -319,20 +336,22 @@ const MainScreen: React.FC = () => {
 
     useEffect(()=> {
 
-        console.log("likedProduct: " + likedProduct)
+        console.log("likedProducts: " + likedProducts)
 
-    },[likedProduct])
+    },[likedProducts])
 
     return (
 
         <BaseLayout aCenter>
 
             <animated.View style={SearchBarAnimation}>
+
                 <HStack height={48}
                         width={WIDTH * .9}
                         justify={"space-between"}
                         marginBottom={ isSearching? 20 : 14}
                 >
+
                     {/*// @ts-ignore*/}
                     <Input value={searchText}
 
@@ -368,54 +387,20 @@ const MainScreen: React.FC = () => {
                     </animated.View>
 
                 </HStack>
+
             </animated.View>
-
-
-
-            {/*<MaskedView*/}
-            {/*    style={{ flex: 1, flexDirection: 'row', height: 364 }}*/}
-            {/*    maskElement={*/}
-            {/*        <View*/}
-            {/*            style={{*/}
-            {/*                // Transparent background because mask is based off alpha channel.*/}
-            {/*                backgroundColor: 'transparent',*/}
-            {/*                flex: 1,*/}
-            {/*                justifyContent: 'center',*/}
-            {/*                alignItems: 'center',*/}
-            {/*            }}*/}
-            {/*        >*/}
-            {/*            <Text*/}
-            {/*                style={{*/}
-            {/*                    fontSize: 60,*/}
-            {/*                    color: 'black',*/}
-            {/*                    fontWeight: 'bold',*/}
-            {/*                }}*/}
-            {/*            >*/}
-            {/*                Basic Mask*/}
-            {/*            </Text>*/}
-            {/*        </View>*/}
-            {/*    }*/}
-            {/*>*/}
-            {/*    /!* Shows behind the mask, you can put anything here, such as an image *!/*/}
-            {/*    <LinearGradient*/}
-            {/*        colors={['#ffe17f', '#ffd03a', "#ff3535", "#ff7e7e"]}*/}
-            {/*        style={{ flex: 1, height: "100%" }}*/}
-            {/*    />*/}
-            {/*    /!*<View style={{ flex: 1, height: '100%', backgroundColor: '#324376' }} />*!/*/}
-            {/*    /!*<View style={{ flex: 1, height: '100%', backgroundColor: '#F5DD90' }} />*!/*/}
-            {/*    /!*<View style={{ flex: 1, height: '100%', backgroundColor: '#F76C5E' }} />*!/*/}
-            {/*    /!*<View style={{ flex: 1, height: '100%', backgroundColor: '#e1e1e1' }} />*!/*/}
-            {/*</MaskedView>*/}
 
             { !isSearching?
 
                 <animated.View style={ProductSectionAnimation}>
+
                     <FlatList
 
                         ListHeaderComponent={
 
                             <>
                                 <animated.View style={TopBannerAnimation}>
+
                                     <Press
                                         height={144}
                                         width={WIDTH * 0.9}
@@ -427,6 +412,7 @@ const MainScreen: React.FC = () => {
                                             width: WIDTH * 0.9,
                                             borderRadius: 12
                                         }}/>
+
                                         <View style={{
                                             position: "absolute",
                                             height: 144,
@@ -435,14 +421,14 @@ const MainScreen: React.FC = () => {
                                             opacity: .4,
                                             backgroundColor: "black"
                                         }}></View>
+
                                         <VarText type={"heading1"} content={"Minimal 文具大賞"} position={"absolute"} bold
                                                  color={"white"}
 
                                         />
+
                                     </Press>
                                 </animated.View>
-
-
 
                                 <animated.View style={CategorySectionAnimation}>
 
@@ -480,6 +466,29 @@ const MainScreen: React.FC = () => {
                             alignItems: "center"
                         }}
 
+                        ListFooterComponent={
+
+                            <>
+                                <HStack
+                                    backgroundColor={"#f8f8f8"}
+                                    borderRadius={12}
+                                    borderColor={"#ddd"}
+                                    borderWidth={1}
+                                    jCenter
+                                    width={WIDTH * 0.8}
+                                    py={24}
+                                    marginTop={16}
+                                    marginBottom={32}
+                                >
+                                    <VarText type={"normal"} content={"已經沒東西了，嗚嗚嗚..."} color={"#888"}/>
+                                </HStack>
+                            </>
+                        }
+
+                        ListFooterComponentStyle={{
+
+                        }}
+
                         data={testData.items}
                         keyExtractor={item => item.product_id.toString()}
                         renderItem={ProductRenderItem}
@@ -491,7 +500,8 @@ const MainScreen: React.FC = () => {
                             justifyContent: "space-between"
                         }}
                         contentContainerStyle={{
-                            alignItems: "center"
+                            alignItems: "center",
+                            paddingBottom: 64,
                         }}/>
                 </animated.View>
                  :
