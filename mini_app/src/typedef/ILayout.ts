@@ -56,7 +56,7 @@ export interface ILayout {
 
     shadowColor? : string
     shadowOpacity? : number
-    shadowWidth?: number
+    shadowRadius?: number
     shadowOffset?: {
         height? : number
         width? : number
@@ -74,6 +74,11 @@ export interface IArrangeableLayout extends ILayout {
     aCenter?: boolean //stands for align center
     center?: boolean //stands for align center
 
+}
+
+export interface IFlexibleLayout extends IArrangeableLayout {
+
+    flexDirection?: "column" | "row"
 }
 
 export interface IStackLayout extends IArrangeableLayout {}

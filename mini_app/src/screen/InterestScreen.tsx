@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import {Image, Pressable} from "react-native";
 import {BaseLayout, HStack, VStack} from "../component/primitive/Layout";
 import {HEIGHT, WIDTH} from "../utility/util";
-import {VarText} from "../component/primitive/Text";
+import {Txt} from "../component/primitive/Text";
 import images from "../utility/image";
 import {GradientButton} from "../component/GradientButton";
 import {useDispatch, useSelector} from "react-redux";
-import {IAccountObject, selectAccount, setInterestedCategory} from "../global_state/accountSlice";
+import {IAccountObject, selectAccount, setInterestedCategory} from "../state/accountSlice";
 import {IconProps} from "react-native-vector-icons/Icon";
 import {Press} from "../component/primitive/Press";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {MainScreenProps} from "../type_definition/NavigationType";
+import {MainScreenProps} from "../typedef/NavigationType";
 
 const InterestItem = (props: { uri: object, index: number }) => {
 
@@ -72,8 +72,8 @@ const InterestScreen: React.FC = () => {
 
                 <VStack height={HEIGHT * .15} center>
 
-                    <VarText type={"heading2"} content="選擇您感興趣的商品" color={"#666"}/>
-                    <VarText type={"heading3"} content="選擇多個種類" color={"#999"}/>
+                    <Txt type={"heading2"} content="選擇您感興趣的商品" color={"#666"}/>
+                    <Txt type={"heading3"} content="選擇多個種類" color={"#999"}/>
 
                 </VStack>
 
@@ -157,7 +157,7 @@ const InterestScreen: React.FC = () => {
                             dispatch(setInterestedCategory([false, false, false, false, false, false, false, false, false, false, false, false]))
                         }}
                     >
-                        <VarText type={"heading3"} content={"略過"} color={"#888"}/>
+                        <Txt type={"heading3"} content={"略過"} color={"#888"}/>
                     </Press>
 
                 </VStack>

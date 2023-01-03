@@ -8,17 +8,12 @@ import {FlatList, Image, ListRenderItem, Pressable, ScrollView, View} from "reac
 import {WIDTH} from "../utility/util";
 import {CategoryItem, IProductItem, ProductItem, SearchResultRenderItem} from "./MainScreen";
 import {useDispatch, useSelector} from "react-redux";
-import {selectAccount, setProductLikeStatus} from "../global_state/accountSlice";
+import {selectAccount, setProductLikeStatus} from "../state/accountSlice";
 import {WishlistHeartIconButton, XButton} from "../component/Icon";
 import images from "../utility/image";
-import {VarText} from "../component/primitive/Text";
+import {Txt} from "../component/primitive/Text";
 
-interface IProductItemWithIndex extends IProductItem {
-    index: number,
-    separators: object,
-}
-
-const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
+const ProductItem_Liked: React.FC<IProductItem> = (thisProduct) => {
 
     const dispatch = useDispatch()
 
@@ -39,7 +34,11 @@ const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
             }}
         >
 
-            <Image source={images.logo.uri}
+
+            <Image source={{
+                //@ts-ignore
+                uri: thisProduct.productCoverImagesURL[0]
+            }}
                    style={{
                        // borderTopLeftRadius: 8,
                        // borderBottomLeftRadius: 8,
@@ -57,17 +56,23 @@ const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
                     justify={"center"}
                 // backgroundColor={"gray"}
             >
-                <VarText type={"normal"} content={thisProduct.title} color={"#666666"}/>
-                <VarText marginTop={4} type={"heading3"} bold content={"$ " + thisProduct.price + ""}
-                         color={"#FF5454"}/>
+                <Txt type={"normal"} content={thisProduct.productTitle} color={"#666666"}/>
+                <Txt marginTop={4} type={"heading3"} bold content={"$ " +
+                    //@ts-ignore
+                    thisProduct.productPrices[0] + ""
+                }
+                     color={"#FF5454"}/>
             </VStack>
 
             <XButton onPress={() => {
 
                 dispatch(setProductLikeStatus({
-                    product_id: thisProduct.product_id,
-                    title: thisProduct.title,
-                    price: thisProduct.price
+                    _id: thisProduct._id,
+                    productTitle: thisProduct.productTitle,
+                    productPrices: thisProduct.productPrices,
+                    productRate: thisProduct.productRate,
+                    productCoverImagesURL: thisProduct.productCoverImagesURL,
+                    productTags: thisProduct.productTags
                 }))
 
             }}/>
@@ -76,13 +81,14 @@ const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
     </>
 }
 
-export const ProductRenderItem: ListRenderItem<IProductItemWithIndex> = ({item}) =>
+export const ProductRenderItem: ListRenderItem<IProductItem> = ({item}) =>
 
-    <ProductItem_Liked product_id={item.product_id}
-                       title={item.title}
-                       price={item.price}
-                       index={item.index}
-                       separators={item.separators}
+    <ProductItem_Liked _id={item._id}
+                       productTitle={item.productTitle}
+                       productPrices={item.productPrices}
+                       productRate={item.productRate}
+                       productTags={item.productTags}
+                       productCoverImagesURL={item.productCoverImagesURL}
     />
 
 const WishlistScreen: React.FC = () => {
@@ -117,8 +123,8 @@ const WishlistScreen: React.FC = () => {
     const headerAnimation = useSpring({
 
         opacity: enterAnimation ? 1 : 0,
-        bottom: enterAnimation ? 0 : 48,
-        config: config.stiff,
+        bottom: enterAnimation ? 0 : 24,
+        config: config.slow,
         // onRest: ()=>{
         //     navigation.navigate("Welcome")
         // }
@@ -127,9 +133,9 @@ const WishlistScreen: React.FC = () => {
     const SegmentedButtonAnimation = useSpring({
 
         opacity: enterAnimation ? 1 : 0,
-        bottom: enterAnimation ? 0 : 32,
-        delay: 100,
-        config: config.default,
+        bottom: enterAnimation ? 0 : 24,
+        delay: 120,
+        config: config.slow,
         // onRest: ()=>{
         //     navigation.navigate("Welcome")
         // }
@@ -185,7 +191,7 @@ const WishlistScreen: React.FC = () => {
 
             <animated.View style={headerAnimation}>
 
-                <ScreenHeader title={"我的最愛"} showBackButton={false} showUtilButton={false}/>
+                <ScreenHeader title={"我的最愛"} showBackButton={false} showUtilButton={false} showShareButton={false}/>
 
             </animated.View>
 
@@ -236,7 +242,7 @@ const WishlistScreen: React.FC = () => {
                         <FlatList
 
                             data={account.interests.likedProducts.items}
-                            keyExtractor={item => "result_" + item.product_id.toString()}
+                            keyExtractor={item => "result_" + item._id.toString()}
                             renderItem={({item, index, separators}) => <ProductRenderItem item={item} index={index}
                                                                                           separators={separators}/>}
                             showsVerticalScrollIndicator={false}
@@ -294,7 +300,7 @@ const WishlistScreen: React.FC = () => {
                         <FlatList
 
                             data={account.interests.likedProducts.items}
-                            keyExtractor={item => "result_" + item.product_id.toString()}
+                            keyExtractor={item => "w" + item._id}
                             renderItem={({item, index, separators}) => <ProductRenderItem item={item} index={index}
                                                                                           separators={separators}/>}
                             showsVerticalScrollIndicator={false}

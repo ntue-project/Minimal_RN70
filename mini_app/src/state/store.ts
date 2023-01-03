@@ -6,6 +6,7 @@ import thunk from "redux-thunk";
 import accountReducer from "./accountSlice";
 
 const persistConfig = {
+
     key: 'root',
     storage: AsyncStorage,
 };
@@ -22,4 +23,4 @@ export const store = configureStore({
 
 });
 
-persistStore(store);
+persistStore(store)

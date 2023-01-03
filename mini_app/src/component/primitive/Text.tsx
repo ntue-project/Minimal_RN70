@@ -1,7 +1,7 @@
 import React, {ReactNode, useContext} from "react";
 import {Text} from "react-native";
 import {Platform} from "react-native";
-import {IBaseLayout, ILayout} from "../../type_definition/ILayout";
+import {IBaseLayout, ILayout} from "../../typedef/ILayout";
 
 const smaller = -2
 const accessibilityShift = 2
@@ -18,7 +18,7 @@ export interface ITextProps extends ILayout {
     bold?: boolean
 }
 
-export const VarText: React.FC<ITextProps> = ({type, content, bold, children, ...props}) => {
+export const Txt: React.FC<ITextProps> = ({type, content, bold, children, ...props}) => {
 
     let styleObj = {}
 
@@ -48,13 +48,19 @@ export const VarText: React.FC<ITextProps> = ({type, content, bold, children, ..
 
 
     return (
-        <Text style={[styleObj,
+
+        <Text
+
+            numberOfLines={1}
+            style={[styleObj,
             //@ts-ignore
             {
+
                 paddingHorizontal: props.px,
                 paddingVertical: props.py,
                 letterSpacing: props.letterSpacing? props.letterSpacing : 0.5,
                 fontWeight: bold ? props.fontWeight ? props.fontWeight : "bold" : "normal",
+
                 ...props}
         ]}>
             {content}

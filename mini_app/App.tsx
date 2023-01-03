@@ -9,7 +9,7 @@ import LinearGradient from "react-native-linear-gradient";
 import LoginScreen from './src/screen/LoginScreen';
 import {NavigationContainer, useNavigation} from "@react-navigation/native";
 import {Provider} from "react-redux";
-import {store} from "./src/global_state/store";
+import {store} from "./src/state/store";
 import InterestScreen from "./src/screen/InterestScreen";
 import IntroductionScreen from "./src/screen/IntroductionScreen";
 import MainScreen from "./src/screen/MainScreen";
@@ -18,12 +18,13 @@ import WishlistScreen from "./src/screen/WishlistScreen";
 import NotificationScreen from "./src/screen/NotificationScreen";
 import AccountScreen from "./src/screen/AccountScreen";
 import {TabAccountIcon, TabHomeIcon, TabNotificationIcon, TabWishlistIcon} from "./src/component/TabIcon";
-import {RootParamList} from "./src/type_definition/NavigationType";
+import {RootParamList} from "./src/typedef/NavigationType";
 
-const Stack = createNativeStackNavigator<RootParamList>();
+const Stack = createNativeStackNavigator<RootParamList>()
 const Tab = createBottomTabNavigator<RootParamList>()
 
 const App = () => {
+
     return (
 
         <Provider store={store}>
@@ -35,11 +36,13 @@ const App = () => {
                     <NativeStackContent/>
                 </NavigationContainer>
             </SafeAreaProvider>
+
         </Provider>
     )
 }
 
 const NativeStackContent: React.FC = () => {
+
     return (
         <Stack.Navigator initialRouteName="TabContent"
                          screenOptions={{
@@ -69,9 +72,11 @@ const TabContent: React.FC = () => {
     return (
         <Tab.Navigator initialRouteName="MainScreen"
                        screenOptions={({route}) => ({
+
                            headerShown: false,
                            tabBarShowLabel: false,
                            tabBarActiveTintColor: "#FF5454",
+
                            tabBarIcon: ({focused, color, size}) => {
                                if (route.name === "MainScreen") {
                                    return (

@@ -14,9 +14,9 @@ export const RatingStar: React.FC<RatingStarProps> = ({type}) => {
 
      return <>
 
-         { type === "FULL" ? <RatingStarFull size={16} color={"#ff5454"}/> :
-             type === "HALF" ? <RatingStarHalf size={16} color={"#ff5454"}/> :
-                 <RatingStarOutline size={16} color={"#ff5454"}/> }
+         { type === "FULL" ? <RatingStarFull size={14} color={"#ff5454"}/> :
+             type === "HALF" ? <RatingStarHalf size={14} color={"#ff5454"}/> :
+                 <RatingStarOutline size={14} color={"#ff5454"}/> }
 
      </>
 }

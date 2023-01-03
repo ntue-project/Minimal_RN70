@@ -1,5 +1,5 @@
 import React from "react";
-import {IArrangeableLayout, IBaseLayout, ILayout} from "../../type_definition/ILayout";
+import {IArrangeableLayout, IBaseLayout, ILayout} from "../../typedef/ILayout";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {TextInput} from "react-native";
 import {ITextProps} from "./Text";

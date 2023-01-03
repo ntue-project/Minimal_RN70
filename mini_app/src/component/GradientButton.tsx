@@ -3,7 +3,7 @@ import LinearGradient from "react-native-linear-gradient";
 import React from "react";
 import {Press} from "./primitive/Press";
 import {WIDTH} from "../utility/util";
-import {IPress} from "../type_definition/IPress";
+import {IPress} from "../typedef/IPress";
 
 interface IGradientButton extends IPress{
 
@@ -56,10 +56,10 @@ export const GradientButton :React.FC<IGradientButton> = ( props ) => {
 
             <LinearGradient
                 useAngle={true}
-                angle={179}
+                angle={178}
                 angleCenter={{ x: 0.5, y: 0.5}}
-                locations={[0, 0.2 ,0.9]}
-                colors={['#ffb443', '#ff9029', '#ff3d00']}
+                locations={[0 ,0.9]}
+                colors={['#ff9029', '#ff3d00']}
                 style={{
                     height: buttonType.height,
                     width: props.width,
@@ -70,12 +70,15 @@ export const GradientButton :React.FC<IGradientButton> = ( props ) => {
 
                 {/*@ts-ignore*/}
                 <Text style={{
+
                     paddingHorizontal: props.padding? props.padding : buttonType.padding,
 
                     fontSize: buttonType.fontSize,
                     fontWeight: props.fontWeight? props.fontWeight : buttonType.fontWeight,
 
                     color: "white",
+
+                    letterSpacing: 1
                 }}>
                     {props.title}
                 </Text>

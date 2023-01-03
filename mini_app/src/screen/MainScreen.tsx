@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import {BaseLayout, HStack, VStack} from "../component/primitive/Layout";
 import {WIDTH} from "../utility/util";
 import {FlatList, Image, ListRenderItem, Pressable, ScrollView, Text, View} from "react-native";
-import {VarText} from "../component/primitive/Text";
+import {Txt} from "../component/primitive/Text";
 import images from "../utility/image";
 import {MainScreenSearchButton, ShoppingCart, WishlistHeartIconButton} from "../component/Icon";
 import MaskedView from "@react-native-masked-view/masked-view";
@@ -10,72 +10,27 @@ import LinearGradient from "react-native-linear-gradient";
 import {Press} from "../component/primitive/Press";
 import {Input} from "../component/primitive/Input";
 import * as tf from "@tensorflow/tfjs"
-import {selectAccount, setProductLikeStatus} from "../global_state/accountSlice";
+import {selectAccount, setProductLikeStatus} from "../state/accountSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {print4} from "../utility/console";
 import {useIsFocused, useNavigation, useRoute} from "@react-navigation/native";
 import {config, useSpring, animated} from "@react-spring/native";
-import {ProductDetailScreenProps} from "../type_definition/NavigationType";
+import {ProductDetailScreenProps} from "../typedef/NavigationType";
+import {RealmApp} from "../realm/realm";
 
 export interface IProductItem {
 
-    product_id: number,
-    title: string,
-    price: number
-    stars: number
+    _id: number,
+    productTitle: string,
+    productPrices: []
+    productCoverImagesURL: []
+    productRate: number
+    productTags: []
 }
 
-export interface IProductDataList {
+export interface IProductItemList {
 
     items: IProductItem[]
-}
-
-const testData: IProductDataList = {
-
-    items: [
-        {
-            product_id: 1,
-            title: "線圈線條筆記本",
-            price: 49,
-            stars: 3.7
-        },
-        {
-            product_id: 2,
-            title: "笑臉長尾夾6入",
-            price: 29,
-            stars: 3.1
-        },
-        {
-            product_id: 3,
-            title: "大迴紋針 12入",
-            price: 59,
-            stars: 4.5
-        },
-        {
-            product_id: 4,
-            title: "F牌色鉛筆 12色",
-            price: 149,
-            stars: 4.4
-        },
-        {
-            product_id: 5,
-            title: "枝葉搖曳馬克杯",
-            price: 129,
-            stars: 5
-        },
-        {
-            product_id: 6,
-            title: "裝飾氣氛盆栽",
-            price: 139,
-            stars: 3.7
-        },
-        {
-            product_id: 7,
-            title: "奇趣氛圍方塊",
-            price: 49,
-            stars: 4.4
-        },
-    ]
 }
 
 export const ProductItem: React.FC<IProductItem> = (thisProduct) => {
@@ -88,12 +43,13 @@ export const ProductItem: React.FC<IProductItem> = (thisProduct) => {
     useEffect(()=> {
 
         // console.log("This Product is in likedProducts " + )
-        // console.log("This is the likedProducts" + JSON.stringify(account.interests.likedProducts.items.find((product: IProductItem) => product.product_id === 1), null, 2))
+        // console.log("This is the likedProducts" + JSON.stringify(account.interests.likedProducts.items.find((product: IProductItem) => product._id === 1), null, 2))
 
-        setIsLiked(account.interests.likedProducts.items.some((product: IProductItem) => product.product_id == thisProduct.product_id))
+        setIsLiked(account.interests.likedProducts.items.some((product: IProductItem) => product._id == thisProduct._id))
 
     }, [account])
 
+    // @ts-ignore
     return (
 
         <Pressable
@@ -122,15 +78,21 @@ export const ProductItem: React.FC<IProductItem> = (thisProduct) => {
                 onPress={()=> {
 
                     dispatch(setProductLikeStatus({
-                        product_id: thisProduct.product_id,
-                        title: thisProduct.title,
-                        price: thisProduct.price,
-                        stars: thisProduct.stars
+                        _id: thisProduct._id,
+                        productTitle: thisProduct.productTitle,
+                        productPrices: thisProduct.productPrices,
+                        productRate: thisProduct.productRate,
+                        productCoverImagesURL: thisProduct.productCoverImagesURL,
+                        productTags: []
                     }))
                 }}
             />
 
-            <Image source={images.logo.uri}
+
+            <Image source={{
+                //@ts-ignore
+                uri: thisProduct.productCoverImagesURL![0]
+            }}
                    style={{
                        borderRadius: 12,
                        height: WIDTH * 0.43,
@@ -144,8 +106,10 @@ export const ProductItem: React.FC<IProductItem> = (thisProduct) => {
                     marginLeft={2}
                     justify={"flex-start"}
             >
-                <VarText marginTop={2} type={"normal"} content={thisProduct.title} color={"#666666"}/>
-                <VarText marginTop={3} type={"heading3"} bold content={"$ " + thisProduct.price + ""} color={"#FF5454"}/>
+                <Txt marginTop={2} type={"normal"} content={thisProduct.productTitle} color={"#666666"}/>
+                <Txt marginTop={3} type={"heading3"} bold content={"$ " +
+                    //@ts-ignore
+                    thisProduct.productPrices[0] + ""} color={"#FF5454"}/>
             </VStack>
         </Pressable>
     )
@@ -181,7 +145,7 @@ export const CategoryItem = (props: { categoryText: string, selected: boolean })
                 }}
             >
 
-                <VarText type={"normal"} letterSpacing={1} fontWeight={props.selected? "800" : "400"} content={props.categoryText} color={props.selected ? "white" : "#666"}/>
+                <Txt type={"normal"} letterSpacing={1} fontWeight={props.selected? "800" : "400"} content={props.categoryText} color={props.selected ? "white" : "#666"}/>
             </Pressable>
         </LinearGradient>
 
@@ -189,7 +153,7 @@ export const CategoryItem = (props: { categoryText: string, selected: boolean })
     )
 }
 
-export const SearchResultItem: React.FC<IProductItem> = ({product_id, title, price}) => {
+export const SearchResultItem: React.FC<IProductItem> = ({_id, productTitle, productPrices}) => {
 
     useEffect(()=> {
 
@@ -231,8 +195,8 @@ export const SearchResultItem: React.FC<IProductItem> = ({product_id, title, pri
                     marginLeft={2}
                     justify={"flex-start"}
             >
-                <VarText marginTop={2} type={"heading3"} content={title} color={"#666666"}/>
-                <VarText marginTop={3} type={"heading3"} bold content={"$ " + price + ""} color={"#FF5454"}/>
+                <Txt marginTop={2} type={"heading3"} content={productTitle} color={"#666666"}/>
+                <Txt marginTop={3} type={"heading3"} bold content={"$ " + productPrices + ""} color={"#FF5454"}/>
             </VStack>
         </Pressable>
     )
@@ -251,9 +215,10 @@ export const SearchResultRenderItem: ListRenderItem<IProductItem> = ({item}) =>
 
 const MainScreen: React.FC = () => {
 
+    const [exampleProducts, setExampleProducts] = useState([])
     const [searchText, setSearchText] = useState("")
     const [isSearching, setIsSearching] = useState(false)
-    const [searchResult, setSearchResult] = useState<IProductDataList["items"]>([])
+    const [searchResult, setSearchResult] = useState<IProductItemList["items"]>([])
     const [enterAnimation, setEnterAnimation] = useState(false)
 
     const likedProducts = useSelector(selectAccount).interests.likedProducts
@@ -267,17 +232,17 @@ const MainScreen: React.FC = () => {
     const SearchBarAnimation = useSpring({
 
         opacity: enterAnimation? 1 : 0,
-        bottom: enterAnimation? 0 : 32,
+        bottom: enterAnimation? 0 : 24,
         delay: 0,
-        config: config.stiff,
+        config: config.slow,
     })
 
     const SearchButtonAnimation = useSpring({
 
         opacity: enterAnimation? 1 : 0,
-        bottom: enterAnimation? 0 : 32,
+        bottom: enterAnimation? 0 : 24,
         delay: 25,
-        config: config.stiff,
+        config: config.slow,
     })
 
     const TopBannerAnimation = useSpring({
@@ -304,7 +269,30 @@ const MainScreen: React.FC = () => {
         config: config.default,
     })
 
-    useEffect(() => {
+    useEffect( () => {
+
+        const cred = async () => {
+
+            const credentials = Realm.Credentials.anonymous();
+            await RealmApp.logIn(credentials)
+
+            //@ts-ignore
+            const mongodb = RealmApp.currentUser.mongoClient("mongodb-atlas");
+            console.log("DB:", mongodb)
+
+            const products = mongodb.db("examples").collection("products");
+
+            console.log("amazing")
+
+            //@ts-ignore
+            const product = await products.find({ specialEventCode: 0 });
+
+            //@ts-ignore
+            setExampleProducts(product)
+        }
+
+        cred()
+
         const unsubscribe = navigation.addListener('blur', () => {
             setEnterAnimation(false)
             console.log("BLUR")
@@ -328,7 +316,8 @@ const MainScreen: React.FC = () => {
 
     useEffect(()=> {
 
-        const result = testData.items.filter( word => word.title.includes(searchText))
+        //@ts-ignore
+        const result = exampleProducts.filter( word => word.productTitle.includes(searchText))
         setSearchResult(result)
         console.log(result)
 
@@ -340,6 +329,14 @@ const MainScreen: React.FC = () => {
 
     },[likedProducts])
 
+    useEffect(()=> {
+
+        // console.log("exampleProducts: ", JSON.stringify(exampleProducts))
+
+    }, [exampleProducts])
+
+    // @ts-ignore
+    // @ts-ignore
     return (
 
         <BaseLayout aCenter>
@@ -422,8 +419,8 @@ const MainScreen: React.FC = () => {
                                             backgroundColor: "black"
                                         }}></View>
 
-                                        <VarText type={"heading1"} content={"Minimal 文具大賞"} position={"absolute"} bold
-                                                 color={"white"}
+                                        <Txt type={"heading1"} content={"Minimal 文具大賞"} position={"absolute"} bold
+                                             color={"white"}
 
                                         />
 
@@ -480,7 +477,7 @@ const MainScreen: React.FC = () => {
                                     marginTop={16}
                                     marginBottom={32}
                                 >
-                                    <VarText type={"normal"} content={"已經沒東西了，嗚嗚嗚..."} color={"#888"}/>
+                                    <Txt type={"normal"} content={"已經沒東西了，嗚嗚嗚..."} color={"#888"}/>
                                 </HStack>
                             </>
                         }
@@ -489,8 +486,8 @@ const MainScreen: React.FC = () => {
 
                         }}
 
-                        data={testData.items}
-                        keyExtractor={item => item.product_id.toString()}
+                        data={exampleProducts}
+                        keyExtractor={item => item._id + ""}
                         renderItem={ProductRenderItem}
                         numColumns={2}
                         showsVerticalScrollIndicator={false}
@@ -510,7 +507,7 @@ const MainScreen: React.FC = () => {
                     <FlatList
 
                         data={searchResult}
-                        keyExtractor={item => "result_" + item.product_id.toString()}
+                        keyExtractor={item => "result_" + item}
                         renderItem={SearchResultRenderItem}
                         numColumns={2}
                         showsVerticalScrollIndicator={false}

@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {IProductDataList, IProductItem} from "../screen/MainScreen";
+import {IProductItemList, IProductItem} from "../screen/MainScreen";
 
 export interface IAccountObject {
 
@@ -13,8 +13,8 @@ export interface IAccountObject {
     interests: {
 
         interestedCategory: boolean[]
-        likedProducts: IProductDataList
-        wishlistedProduct: IProductDataList
+        likedProducts: IProductItemList
+        wishlistedProduct: IProductItemList
     }
 
     data: {
@@ -32,24 +32,24 @@ export const initialState = {
     },
 
     interests: {
-
-        interestedCategory: [false,false,false,false,false,false,false,false,false,false,false,false],
+        interestedCategory: [false, false, false, false, false, false, false, false, false, false, false, false],
         likedProducts: {
             items: [
                 {
-                    product_id: 1,
-                    title: "線圈線條筆記本",
-                    price: 49,
+                    _id: 1,
+                    productTitle: "線圈線條筆記本",
+                    productPrices: [49],
+                    productRate: 4,
+                    productTags: ["gg"],
+                    productCoverImagesURL: [""]
                 }
-            ]},
-        wishlistedProduct: { items: [{}]}
+            ]
+        },
+        wishlistedProduct: {items: [{}]}
     },
 
-    data: {
-
-    }
-
-} as IAccountObject
+    data: {}
+} as unknown as IAccountObject
 
 const accountSlice = createSlice({
 
@@ -74,14 +74,14 @@ const accountSlice = createSlice({
 
             // let dummy = [...state.interests.likedProducts.items]
 
-            if(!state.interests.likedProducts.items.some((product: IProductItem) => product.product_id === action.payload.product_id)) {
+            if(!state.interests.likedProducts.items.some((product: IProductItem) => product._id === action.payload._id)) {
 
                 // @ts-ignore
                 state.interests.likedProducts.items.push(action.payload)
 
             } else {
 
-                state.interests.likedProducts.items = state.interests.likedProducts.items.filter((product: IProductItem) => product.product_id !== action.payload.product_id)
+                state.interests.likedProducts.items = state.interests.likedProducts.items.filter((product: IProductItem) => product._id !== action.payload._id)
             }
 
         }

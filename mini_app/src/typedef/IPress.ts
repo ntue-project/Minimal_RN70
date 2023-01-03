@@ -1,6 +1,6 @@
-import {ILayout} from "./ILayout";
+import {IArrangeableLayout, IFlexibleLayout, ILayout} from "./ILayout";
 
-export interface IPress extends ILayout {
+export interface IPress extends IFlexibleLayout {
 
     onPress? (): void
     onLongPress? (): void
@@ -13,5 +13,6 @@ export interface IPressIcon extends IPress {
 }
 
 export interface IPressWithProps extends IPress {
-    props?: any
+
+    props?:any
 }

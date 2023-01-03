@@ -8,85 +8,86 @@ import {FlatList, Image, ListRenderItem, Pressable, ScrollView, View} from "reac
 import {WIDTH} from "../utility/util";
 import {CategoryItem, IProductItem, ProductItem, SearchResultRenderItem} from "./MainScreen";
 import {useDispatch, useSelector} from "react-redux";
-import {selectAccount, setProductLikeStatus} from "../global_state/accountSlice";
+import {selectAccount, setProductLikeStatus} from "../state/accountSlice";
 import {HeartButton, WishlistHeartIconButton, XButton} from "../component/Icon";
 import images from "../utility/image";
-import {VarText} from "../component/primitive/Text";
+import {Txt} from "../component/primitive/Text";
 import {RatingStar, RatingStarBar} from "../component/Gadget";
-
+//
 interface IProductItemWithIndex extends IProductItem {
     index: number,
     separators: object,
 }
+//
+// const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
+//
+//     const dispatch = useDispatch()
+//
+//     return <>
+//
+//         <Pressable
+//
+//             style={{
+//
+//                 height: "auto",
+//                 width: WIDTH * 0.9 - 20,
+//
+//                 flexDirection: "row",
+//                 borderRadius: 10,
+//                 borderColor: "lightgray",
+//                 alignItems: "center"
+//                 // borderWidth: 2,
+//             }}
+//         >
+//
+//             <Image source={images.logo.uri}
+//                    style={{
+//                        // borderTopLeftRadius: 8,
+//                        // borderBottomLeftRadius: 8,
+//                        borderRadius: 8,
+//                        height: WIDTH * 0.15,
+//                        width: WIDTH * 0.25,
+//                        marginRight: 12,
+//                    }}
+//
+//             />
+//
+//             <VStack flex={1}
+//                     height={WIDTH * 0.15}
+//                     marginLeft={2}
+//                     justify={"center"}
+//                 // backgroundColor={"gray"}
+//             >
+//                 <VarText type={"normal"} content={thisProduct.productTitle} color={"#666666"}/>
+//                 <VarText marginTop={4} type={"heading3"} bold content={"$ " + thisProduct.productPrices + ""}
+//                          color={"#FF5454"}/>
+//             </VStack>
+//
+//             <XButton onPress={() => {
+//
+//                 dispatch(setProductLikeStatus({
+//                     _id: thisProduct._id,
+//                     productTitle: thisProduct.productTitle,
+//                     productPrices: thisProduct.productPrices,
+//                     productRate: thisProduct.productRate,
+//                     productTags: thisProduct.productTags
+//                 }))
+//
+//             }}/>
+//         </Pressable>
+//
+//     </>
+// }
 
-const ProductItem_Liked: React.FC<IProductItemWithIndex> = (thisProduct) => {
-
-    const dispatch = useDispatch()
-
-    return <>
-
-        <Pressable
-
-            style={{
-
-                height: "auto",
-                width: WIDTH * 0.9 - 20,
-
-                flexDirection: "row",
-                borderRadius: 10,
-                borderColor: "lightgray",
-                alignItems: "center"
-                // borderWidth: 2,
-            }}
-        >
-
-            <Image source={images.logo.uri}
-                   style={{
-                       // borderTopLeftRadius: 8,
-                       // borderBottomLeftRadius: 8,
-                       borderRadius: 8,
-                       height: WIDTH * 0.15,
-                       width: WIDTH * 0.25,
-                       marginRight: 12,
-                   }}
-
-            />
-
-            <VStack flex={1}
-                    height={WIDTH * 0.15}
-                    marginLeft={2}
-                    justify={"center"}
-                // backgroundColor={"gray"}
-            >
-                <VarText type={"normal"} content={thisProduct.title} color={"#666666"}/>
-                <VarText marginTop={4} type={"heading3"} bold content={"$ " + thisProduct.price + ""}
-                         color={"#FF5454"}/>
-            </VStack>
-
-            <XButton onPress={() => {
-
-                dispatch(setProductLikeStatus({
-                    product_id: thisProduct.product_id,
-                    title: thisProduct.title,
-                    price: thisProduct.price,
-                    stars: thisProduct.stars
-                }))
-
-            }}/>
-        </Pressable>
-
-    </>
-}
-
-export const ProductRenderItem: ListRenderItem<IProductItemWithIndex> = ({item}) =>
-
-    <ProductItem_Liked product_id={item.product_id}
-                       title={item.title}
-                       price={item.price}
-                       stars={item.stars}
-                       index={item.index}
-                       separators={item.separators}
-    />
+// export const ProductRenderItem: ListRenderItem<IProductItemWithIndex> = ({item}) =>
+//
+//     <ProductItem_Liked _id={item._id}
+//                        productTitle={item.productTitle}
+//                        productPrices={item.productPrices}
+//                        productRate={item.productRate}
+//                        index={item.index}
+//                        separators={item.separators}
+//     />
 
 const ProductDetailScreen: React.FC = () => {
 
@@ -96,7 +97,7 @@ const ProductDetailScreen: React.FC = () => {
 
     const focused = useIsFocused()
     const navigation = useNavigation()
-    const route: RouteProp<{ params: { thisProduct: IProductItem }}> = useRoute()
+    const route: RouteProp<{params: { thisProduct: IProductItem }}> = useRoute()
 
     const dispatch = useDispatch()
     const account = useSelector(selectAccount)
@@ -113,7 +114,7 @@ const ProductDetailScreen: React.FC = () => {
 
     useEffect(() => {
 
-        if(route.params.thisProduct) {
+        if (route.params.thisProduct) {
             setThisProduct(route.params.thisProduct)
         }
 
@@ -189,13 +190,23 @@ const ProductDetailScreen: React.FC = () => {
 
             <animated.View style={headerAnimation}>
 
-                <ScreenHeader title={"商品資訊"} showBackButton={true} showUtilButton={true} showShareButton={true}/>
+                <ScreenHeader title={"商品資訊"}
+                              showBackButton={true}
+                              showUtilButton={true}
+                              showShareButton={true}
+                              onBackButtonPress={() => {
+                                  navigation.goBack()
+                              }}
+                />
 
             </animated.View>
 
             <animated.View style={SegmentedButtonAnimation}>
 
-                <Image source={images.logo.uri}
+                <Image source={
+                    //@ts-ignore
+                    {uri: thisProduct?.productCoverImagesURL[0]
+                    }}
                        style={{
                            // borderTopLeftRadius: 8,
                            // borderBottomLeftRadius: 8,
@@ -214,7 +225,7 @@ const ProductDetailScreen: React.FC = () => {
 
                     <HStack justify={"space-between"} width={WIDTH * 0.9 - 8} aCenter height={56}>
 
-                        <VarText type={"title"} content={thisProduct?.title} color={"#666"} fontWeight={"800"}/>
+                        <Txt type={"heading1"} content={thisProduct?.productTitle} color={"#666"} fontWeight={"800"}/>
 
                         <HeartButton size={18} color={"#ff3725"}/>
 
@@ -226,11 +237,36 @@ const ProductDetailScreen: React.FC = () => {
 
                     <HStack justify={"space-between"} width={WIDTH * 0.9 - 8} aCenter height={32}>
 
-                        <HStack>
-                            <VarText type={"heading1"} content={"NT$ " + thisProduct?.price}/>
-                        </HStack>
+                        <FlatList
 
-                        <VarText type={"heading1"} content={"NT$ " + thisProduct?.price} bold color={"#ff5454"}/>
+                            horizontal
+
+                            //@ts-ignore
+                            data={thisProduct?.productTags}
+                            keyExtractor={item => item + new Date()}
+
+                            renderItem={({item}) => <HStack
+                                backgroundColor={"transparent"}
+                                borderRadius={6}
+                                py={3}
+                                px={5}
+                                borderWidth={1}
+                                borderColor={"#ff5454"}
+
+                            >
+                                <Txt content={item} type={"nano"} color={"#ff5454"}/>
+                            </HStack>}
+
+                            ItemSeparatorComponent={() => <View style={{
+                                width: 8,
+                            }}></View>}
+
+                            contentContainerStyle={{
+
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                        />
 
                     </HStack>
 
@@ -238,27 +274,36 @@ const ProductDetailScreen: React.FC = () => {
 
                 <animated.View style={SwitchToProductSection}>
 
-                    <HStack justify={"space-between"} width={WIDTH * 0.9 - 8} aCenter height={32}>
+                    <HStack justify={"flex-start"} width={WIDTH * 0.9 - 8} aCenter height={32}>
 
-                        <HStack>
-                            <VarText type={"heading1"} content={"NT$ " + thisProduct?.price}/>
+                        <Txt type={"heading1"} content={"NT$ " +
+                            //@ts-ignore
+                            thisProduct?.productPrices[0]} bold color={"#ff5454"}/>
+
+                        <View style={{
+                            height: 16,
+                            width: 1,
+                            backgroundColor: "#ff5454",
+                            marginHorizontal: 12
+                        }}/>
+
+                        <HStack aCenter justify={"flex-start"}>
+
+                            <RatingStarBar rating={thisProduct?.productRate}/>
+
+                            <Txt type={"heading2"} content={thisProduct?.productRate + ""} color={"#ff5454"} bold
+                                 marginLeft={8}/>
+
                         </HStack>
-
-                        <VarText type={"heading1"} content={"NT$ " + thisProduct?.price} bold/>
 
                     </HStack>
 
                 </animated.View>
 
+
+
                 <animated.View style={SwitchToProductSection}>
 
-                    <HStack width={WIDTH * 0.9 - 8} aCenter justify={"flex-start"}>
-
-                        <RatingStarBar rating={thisProduct?.stars}/>
-
-                        <VarText type={"heading3"} content={thisProduct?.stars + ""} color={"#ff5454"} bold marginLeft={8}/>
-
-                    </HStack>
 
                 </animated.View>
 

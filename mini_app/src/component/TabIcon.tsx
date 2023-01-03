@@ -1,5 +1,5 @@
 import React from "react";
-import {IPressWithProps} from "../type_definition/IPress";
+import {IPressWithProps} from "../typedef/IPress";
 import {Pressable, View} from "react-native";
 import {WIDTH} from "../utility/util";
 import MaskedView from "@react-native-masked-view/masked-view";

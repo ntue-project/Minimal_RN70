@@ -1,6 +1,6 @@
 import {BaseLayout, HStack} from "./primitive/Layout";
 import React, {useState} from "react";
-import {VarText} from "./primitive/Text";
+import {Txt} from "./primitive/Text";
 import {Press} from "./primitive/Press";
 import {config, useSpring, animated} from "@react-spring/native";
 import LinearGradient from "react-native-linear-gradient";
@@ -50,7 +50,7 @@ export const SegmentedButton : React.FC<ISegmentedButton> = ({leftLabel, rightLa
                            onPress={onLeftPress}
                     >
                         {switchIndex === 1?
-                            <VarText type={"heading3"} content={leftLabel} color={"#ff6b3e"} bold/> : <VarText type={"heading3"} content={leftLabel} color={"#bbb"}/>
+                            <Txt type={"heading3"} content={leftLabel} color={"#ff6b3e"} bold/> : <Txt type={"heading3"} content={leftLabel} color={"#bbb"}/>
                         }
                     </Press>
 
@@ -59,7 +59,7 @@ export const SegmentedButton : React.FC<ISegmentedButton> = ({leftLabel, rightLa
                            onPress={onRightPress}
                     >
                         {switchIndex === 2?
-                            <VarText type={"heading3"} content={rightLabel} color={"#ff6b3e"} bold/> : <VarText type={"heading3"} content={rightLabel} color={"#bbb"}/>
+                            <Txt type={"heading3"} content={rightLabel} color={"#ff6b3e"} bold/> : <Txt type={"heading3"} content={rightLabel} color={"#bbb"}/>
                         }
                     </Press>
 
